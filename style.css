@@ -1,0 +1,400 @@
+/* ==========================================================================
+   Layers of Rome - UTEP Archival Design System
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Open+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  --color-header-brown: #5b320d;
+  --color-header-brown-dark: #432408;
+  --color-nav-bg: #fcf8f2;
+  --color-nav-text: #6b3d14;
+  --color-nav-hover: #965319;
+  --color-body-bg: #fdfbf7;
+  --color-card-bg: #fdfbf7;
+  --color-text-main: #3a2e26;
+  --color-text-muted: #66574a;
+  --color-border: #e8ded2;
+  --color-accent-gold: #c68b31;
+  --color-brown-lead: #8c4c14;
+  --font-serif: 'Cinzel', 'Georgia', serif;
+  --font-sans: 'Open Sans', 'Segoe UI', sans-serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--color-body-bg);
+  color: var(--color-text-main);
+  font-family: var(--font-sans);
+  line-height: 1.8;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+/* ==========================================================================
+   Top Header Banner (Dark Brown)
+   ========================================================================== */
+.top-header-banner {
+  background-color: var(--color-header-brown);
+  padding: 1.25rem 3rem;
+  display: flex;
+  align-items: center;
+  border-bottom: 2px solid var(--color-header-brown-dark);
+}
+
+.brand-header-title {
+  font-family: var(--font-serif);
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+}
+
+.brand-header-title:hover {
+  opacity: 0.95;
+}
+
+.brand-header-title span.underline {
+  border-bottom: 3px solid #ffffff;
+  padding-bottom: 2px;
+}
+
+/* ==========================================================================
+   Main Navigation Bar (Light Ivory)
+   ========================================================================== */
+.main-nav-bar {
+  background-color: var(--color-nav-bg);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 2px 6px rgba(91, 50, 13, 0.06);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.nav-container-inner {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.nav-menu-list {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  list-style: none;
+  flex-wrap: wrap;
+}
+
+.nav-menu-item {
+  position: relative;
+}
+
+.nav-menu-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 1.1rem 1rem;
+  font-family: var(--font-sans);
+  font-size: 0.825rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-nav-text);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.nav-menu-link:hover,
+.nav-menu-item.active .nav-menu-link {
+  color: var(--color-nav-hover);
+  background-color: rgba(91, 50, 13, 0.04);
+}
+
+.arrow-down {
+  font-size: 0.65rem;
+  transition: transform 0.2s ease;
+  display: inline-block;
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 220px;
+  background-color: #ffffff;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  list-style: none;
+  padding: 0.5rem 0;
+  border-radius: 0 0 6px 6px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all 0.25s ease;
+  z-index: 1100;
+}
+
+.nav-menu-item:hover .dropdown-menu,
+.nav-menu-item:focus-within .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdown-menu li a {
+  display: block;
+  padding: 0.65rem 1.25rem;
+  font-size: 0.85rem;
+  color: var(--color-text-main);
+  text-transform: none;
+  font-weight: 600;
+}
+
+.dropdown-menu li a:hover {
+  background-color: var(--color-nav-bg);
+  color: var(--color-nav-text);
+}
+
+/* ==========================================================================
+   Hero & Main Content Section
+   ========================================================================== */
+.main-wrapper {
+  max-width: 1240px;
+  margin: 2.5rem auto;
+  padding: 0 1.5rem;
+  flex: 1;
+}
+
+.content-card-utep {
+  background: var(--color-body-bg);
+  padding: 2.5rem 1.5rem;
+}
+
+.para-utep {
+  font-size: 1.08rem;
+  line-height: 1.85;
+  color: #3a2e26;
+  margin-bottom: 2rem;
+  text-align: justify;
+}
+
+.para-bold-lead {
+  font-weight: 700;
+  color: var(--color-brown-lead);
+}
+
+/* ==========================================================================
+   UTEP Exact Footer Section
+   ========================================================================== */
+.site-footer {
+  background-color: #5c330a;
+  color: #ffffff;
+  padding: 3.5rem 0 2rem;
+  margin-top: auto;
+  font-family: var(--font-sans);
+  position: relative;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  text-align: center;
+}
+
+/* Top Contacts Grid */
+.footer-contacts-grid {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 4rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+
+.contact-person {
+  text-align: center;
+  font-size: 0.925rem;
+  line-height: 1.6;
+}
+
+.contact-name {
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 0.2rem;
+}
+
+.contact-email {
+  color: #ffffff;
+  text-decoration: underline;
+  display: block;
+}
+
+.contact-email:hover {
+  color: #fce8c7;
+}
+
+.contact-phone {
+  color: #ffffff;
+}
+
+/* Social Media Icons */
+.footer-social-icons {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.social-icon-btn {
+  color: #ffffff;
+  font-size: 1.6rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.social-icon-btn:hover {
+  color: #fce8c7;
+  transform: scale(1.1);
+}
+
+.youtube-badge {
+  font-family: 'Arial Black', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+.facebook-icon {
+  font-family: 'Georgia', serif;
+  font-weight: 700;
+  font-size: 1.8rem;
+  background: rgba(255, 255, 255, 0.15);
+  width: 38px;
+  height: 38px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+/* University Title Banner */
+.utep-title-heading {
+  font-family: var(--font-serif);
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.08em;
+  margin-bottom: 2.25rem;
+  text-transform: uppercase;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Bottom Links 3 Columns */
+.utep-links-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  max-width: 900px;
+  margin: 0 auto 2.5rem;
+}
+
+.utep-link-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.utep-link-col a {
+  color: #ffffff;
+  font-size: 0.925rem;
+  text-decoration: underline;
+  font-weight: 400;
+  transition: color 0.2s ease;
+}
+
+.utep-link-col a:hover {
+  color: #fce8c7;
+}
+
+/* Address & Feedback Bar */
+.footer-address-bar {
+  font-size: 0.875rem;
+  color: #ffffff;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  padding-top: 1.5rem;
+  letter-spacing: 0.02em;
+}
+
+.footer-address-bar a {
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.footer-address-bar a:hover {
+  color: #fce8c7;
+}
+
+/* Scroll to Top Square Button */
+.scroll-top-btn {
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.scroll-top-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Responsive Rules */
+@media (max-width: 768px) {
+  .utep-links-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .footer-contacts-grid {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.75rem;
+  }
+  .utep-title-heading {
+    font-size: 1.35rem;
+  }
+}
