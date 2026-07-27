@@ -31,7 +31,9 @@ function highlightActivePage() {
 
   menuItems.forEach(item => {
     const pageAttr = item.getAttribute('data-page');
-    if (pageAttr && pageAttr === currentPath) {
+    if (pageAttr === 'about-us' && currentPath.startsWith('about-us')) {
+      item.classList.add('active');
+    } else if (pageAttr && pageAttr === currentPath) {
       item.classList.add('active');
     } else {
       item.classList.remove('active');
