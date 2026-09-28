@@ -1,8 +1,84 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, Route, Routes, useLocation, useParams } from 'react-router-dom'
 import { lessons, navigation, pages, type NavItem, type PageData } from './content'
+import homePantheon from './assets/photos/home-pantheon.jpg'
+import homeColosseum from './assets/photos/home-colosseum.jpg'
+import homeSkyline from './assets/photos/home-skyline.jpg'
+import homeAqueduct from './assets/photos/home-aqueduct.jpg'
+import aboutInterview from './assets/photos/about-interview.jpg'
+import aboutSeminar from './assets/photos/about-seminar.jpg'
+import aboutFieldClass from './assets/photos/about-field-class.jpg'
+import studyCohort from './assets/photos/study-cohort.jpg'
+import studyLesson from './assets/photos/study-lesson.jpg'
+import studyView from './assets/photos/study-view.jpg'
+import studyOstia from './assets/photos/study-ostia.jpg'
+import studyJewishGhetto from './assets/photos/study-jewish-ghetto.jpg'
+import mapForumSunset from './assets/photos/map-forum-sunset.jpg'
+import mapMarcellus from './assets/photos/map-marcellus.jpg'
+import mapForumPanorama from './assets/photos/map-forum-panorama.jpg'
 
 const Arrow = () => <span aria-hidden="true">↗</span>
+
+type HeroPhoto = { src: string; alt: string; position?: string }
+const homePhotos: HeroPhoto[] = [
+  { src: homeSkyline, alt: 'The domes and rooftops of Rome', position: 'center 48%' },
+  { src: homePantheon, alt: 'The monumental portico of the Pantheon against a blue sky', position: 'center 60%' },
+  { src: homeColosseum, alt: 'The exterior arches of the Colosseum' },
+  { src: homeAqueduct, alt: 'An ancient Roman aqueduct illuminated by sunset' },
+]
+const aboutPhotos: HeroPhoto[] = [
+  { src: aboutSeminar, alt: 'A Layers of Rome seminar gathered in an outdoor courtyard', position: 'center 53%' },
+  { src: aboutInterview, alt: 'A student interview being filmed near the Colosseum' },
+  { src: aboutFieldClass, alt: 'Students taking notes during an outdoor lesson among Roman ruins', position: 'center 62%' },
+]
+const studyAbroadPhotos: HeroPhoto[] = [
+  { src: studyCohort, alt: 'Layers of Rome students holding a UTEP banner at a Roman site', position: 'center 48%' },
+  { src: studyLesson, alt: 'Students participating in an outdoor lesson in Rome' },
+  { src: studyView, alt: 'UTEP students overlooking the historic center of Rome' },
+  { src: studyOstia, alt: 'Layers of Rome students gathered among the ruins of Ostia Antica' },
+  { src: studyJewishGhetto, alt: 'Layers of Rome students walking through the historic Jewish Ghetto in Rome' },
+]
+const mapTourPhotos: HeroPhoto[] = [
+  { src: mapForumSunset, alt: 'The Forum of Augustus at sunset' },
+  { src: mapMarcellus, alt: 'Theatre of Marcellus and the Temple of Apollo Sosianus in Rome' },
+  { src: mapForumPanorama, alt: 'A panoramic view across the Roman Forum' },
+]
+
+function PhotoBackdrop({ photos, label }: { photos: HeroPhoto[]; label: string }) {
+  const [active, setActive] = useState(0)
+  useEffect(() => {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reduceMotion || photos.length < 2) return
+    const timer = window.setInterval(() => setActive((current) => (current + 1) % photos.length), 7000)
+    return () => window.clearInterval(timer)
+  }, [photos])
+  return <div className="photo-backdrop">
+    <div className="photo-backdrop-images">{photos.map((photo, index) => <img className={active === index ? 'active' : ''} src={photo.src} alt={photo.alt} aria-hidden={active !== index} loading={index === 0 ? 'eager' : 'lazy'} fetchPriority={index === 0 ? 'high' : 'auto'} style={{ objectPosition: photo.position }} key={photo.src} />)}</div>
+    <div className="photo-controls" aria-label={`${label} photographs`}>{photos.map((photo, index) => <button type="button" className={active === index ? 'active' : ''} onClick={() => setActive(index)} aria-label={`Show photograph ${index + 1}: ${photo.alt}`} aria-pressed={active === index} key={photo.src}><span /></button>)}</div>
+  </div>
+}
+
+function IframeScrollGuard({ children }: { children: React.ReactNode }) {
+  const [active, setActive] = useState(false)
+  useEffect(() => {
+    if (!active) {
+      document.documentElement.classList.remove('iframe-scroll-active')
+      return
+    }
+    document.documentElement.classList.add('iframe-scroll-active')
+    const release = (event: KeyboardEvent) => { if (event.key === 'Escape') setActive(false) }
+    window.addEventListener('keydown', release)
+    return () => {
+      document.documentElement.classList.remove('iframe-scroll-active')
+      window.removeEventListener('keydown', release)
+    }
+  }, [active])
+  return <div className={active ? 'iframe-scroll-guard active' : 'iframe-scroll-guard'}>
+    {!active && <button className="iframe-activate" type="button" onClick={() => setActive(true)}><span>Interactive content</span><strong>Click to explore</strong><small>The page will continue scrolling until activated</small></button>}
+    {active && <button className="iframe-release" type="button" onClick={() => setActive(false)}>Return to page scrolling <span aria-hidden="true">↑</span></button>}
+    {children}
+  </div>
+}
 
 function Header() {
   const [open, setOpen] = useState(false)
@@ -55,10 +131,10 @@ function Breadcrumbs({ title, eyebrow }: { title: string; eyebrow: string }) {
   return <div className="breadcrumbs"><Link to="/">Home</Link><span>/</span><span>{eyebrow}</span><span>/</span><span>{title}</span></div>
 }
 
-function PageHero({ data }: { data: PageData }) {
+function PageHero({ data, photos }: { data: PageData; photos?: HeroPhoto[] }) {
   return (
-    <section className="page-hero">
-      <div className="ruin-shape" aria-hidden="true"><i /><i /><i /></div>
+    <section className={photos ? 'page-hero has-photos' : 'page-hero'}>
+      {photos ? <PhotoBackdrop photos={photos} label={data.title} /> : <div className="ruin-shape" aria-hidden="true"><i /><i /><i /></div>}
       <div className="container hero-content">
         <p className="eyebrow">{data.eyebrow}</p>
         <h1>{data.title}</h1>
@@ -69,10 +145,12 @@ function PageHero({ data }: { data: PageData }) {
 }
 
 function StandardPage({ data }: { data: PageData }) {
+  const location = useLocation()
   useEffect(() => { document.title = `${data.title} | Layers of Rome` }, [data.title])
+  const photos = location.pathname.startsWith('/about-us') ? aboutPhotos : location.pathname.startsWith('/study-abroad') ? studyAbroadPhotos : undefined
   return (
     <>
-      <PageHero data={data} />
+      <PageHero data={data} photos={photos} />
       <main id="main" className="container page-main">
         <Breadcrumbs title={data.title} eyebrow={data.eyebrow} />
         <div className="editorial">
@@ -101,44 +179,51 @@ function Home() {
   return (
     <main id="main">
       <section className="home-hero">
-        <div className="hero-architecture" aria-hidden="true"><div className="arch" /><div className="sun" /></div>
+        <PhotoBackdrop photos={homePhotos} label="Rome" />
         <div className="container home-hero-copy">
           <p className="eyebrow">Rome is more than a destination</p>
           <h1>Every street holds<br />another <em>layer.</em></h1>
-          <p>Study abroad, teaching resources, and digital explorations revealing Rome’s central role in world culture.</p>
+          <p>Study abroad, teaching resources, and digital guides for educators, students, Roman enthusiasts, and tourists visiting Rome.</p>
           <div className="hero-actions"><Link className="button primary" to="/study-abroad/info">Study in Rome</Link><Link className="button text" to="/lesson-plans">Explore resources <Arrow /></Link></div>
         </div>
         <p className="hero-caption">The city becomes the classroom.</p>
       </section>
       <section className="intro container">
         <p className="eyebrow">A living educational resource</p>
-        <div className="intro-grid"><h2>To understand Rome,<br />you have to look closer.</h2><div><p>Layers of Rome is both a study abroad program and an open-source educational resource for high school and college teachers, students, scholars, and Roman enthusiasts exploring Rome’s central role as a creator and disseminator of world culture.</p><p>The platform brings together place-based learning, public history, digital media, lesson plans, interactive exhibits, and map tours for use in Rome or in the classroom.</p></div></div>
+        <div className="intro-grid"><h2>To understand Rome,<br />you have to look closer.</h2><div><p>Layers of Rome is both a study abroad program and an online educational resource for educators and tourists visiting Rome. Since its inception as a study abroad course over two decades ago, it has grown into a multifaceted curriculum resource platform.</p><p>Today, it is an open-source educational tool for educators, students, Roman enthusiasts, and tourists, bringing together lesson plans, interactive exhibits, map tours, and useful educational guides for exploring sites in Rome—both on site and in the classroom.</p></div></div>
       </section>
       <section className="story-section">
         <div className="container story-grid">
           <div className="story-heading"><p className="eyebrow">How the layers grew</p><h2>From a course in Rome to a resource for everyone.</h2></div>
           <div className="milestones">
-            <article><span>Nearly two decades</span><h3>Learning in place</h3><p>What began as a study abroad course grew into a multifaceted curriculum resource grounded in the experience of Rome and its cultural history.</p></article>
-            <article><span>2015</span><h3>An NEH summer institute</h3><p>A grant from the National Endowment for the Humanities supported <em>The Monuments of Rome in English Culture</em>, bringing 25 scholars and teachers into the Roman environment to develop lesson plans about Roman life, culture, and history.</p></article>
-            <article><span>Today</span><h3>Open learning, on site or online</h3><p>The institute helped reshape Layers of Rome as both a study abroad program and an open-source educational tool with classroom resources and interactive ways to explore the city.</p></article>
+            <article><span>Over two decades</span><h3>Learning in place</h3><p>What began as a study abroad course grew into a multifaceted curriculum resource platform grounded in Rome and its cultural history.</p></article>
+            <article><span>2015</span><h3>An NEH summer institute</h3><p>A grant from the National Endowment for the Humanities supported the summer institute for teachers <em>The Monuments of Rome in English Culture</em>. Immersion in the Roman environment enabled 25 scholars and teachers to develop lesson plans considering Roman life, culture, and history.</p></article>
+            <article><span>Today</span><h3>Open learning, on site or online</h3><p>The institute led to Layers of Rome being rebranded as both a study abroad program and an open-source online educational tool for educators, students, Roman enthusiasts, and tourists visiting Rome.</p></article>
           </div>
         </div>
       </section>
       <section className="study-feature">
         <div className="container study-feature-grid">
           <div>
-            <p className="eyebrow">UTEP Humanities Study Abroad</p>
+            <p className="eyebrow">UTEP Global Humanities Study Abroad</p>
             <h2>The city becomes the classroom.</h2>
-            <p className="study-lede">Study Abroad is the premiere activity of UTEP’s Humanities Program. Students encounter Roman history, art, and culture in their physical setting—learning why context and place matter in the evolution of world cultures.</p>
-            <p>In Rome and selected Italian cities, students draw on all their senses, practice hands-on skills, and solve real-world problems while creating powerful interactive resources. They work alongside faculty to develop research and publish it on Layers of Rome.</p>
+            <p className="study-lede">Study Abroad is the premiere activity of the Global Humanities Program at the University of Texas at El Paso. Immersion in the physical environment of Roman history, art, and culture helps students understand the importance of context and place in the evolution of world cultures.</p>
+            <p>In Rome and selected Italian cities, students use all their talents and senses, apply hands-on skills, and navigate real-world scenarios while developing powerful interactive resources. Working alongside faculty, they research and publish on Layers of Rome for educators and tourists visiting Rome and Italy.</p>
             <Link className="button primary" to="/study-abroad/info">Explore study abroad <Arrow /></Link>
           </div>
           <dl className="program-facts">
-            <div><dt>02</dt><dd><strong>Weeks on campus</strong><span>Preparation and interdisciplinary study at UTEP</span></dd></div>
+            <div><dt>03</dt><dd><strong>Weeks on campus</strong><span>Preparation and interdisciplinary study at UTEP</span></dd></div>
             <div><dt>02</dt><dd><strong>Weeks in Italy</strong><span>Immersive learning in Rome and other selected cities</span></dd></div>
-            <div><dt>06</dt><dd><strong>Credit hours</strong><span>Up to six credits in Humanities, History, and Communication</span></dd></div>
+            <div><dt>06</dt><dd><strong>Credit hours</strong><span>Up to six credits in Humanities, History, Film, Art, and Political Science</span></dd></div>
           </dl>
         </div>
+      </section>
+      <section className="presentation-section">
+        <div className="container presentation-heading"><div><p className="eyebrow">Layers of Rome presentation</p><h2>Discover the program.</h2></div><p>Explore the people, places, and educational work behind Layers of Rome in this interactive presentation.</p></div>
+        <IframeScrollGuard><div className="container presentation-frame">
+          <iframe title="Layers of Rome interactive presentation" src="https://sway.cloud.microsoft/s/806b4lPhCO6Xcruf/embed" sandbox="allow-forms allow-modals allow-orientation-lock allow-popups allow-same-origin allow-scripts" scrolling="no" loading="lazy" allowFullScreen />
+        </div></IframeScrollGuard>
+        <div className="container presentation-fallback"><a href="https://sway.cloud.microsoft/s/806b4lPhCO6Xcruf" target="_blank" rel="noreferrer">Open the presentation in a new window <Arrow /></a></div>
       </section>
       <section className="pathways">
         <div className="container"><div className="section-heading"><p className="eyebrow">Choose a path</p><h2>Begin your exploration</h2></div>
@@ -236,8 +321,37 @@ function RhetoricLesson() {
 
 function RoutedPage() {
   const location = useLocation()
+  if (location.pathname === '/map-tours') return <MapTours />
   const data = pages[location.pathname]
   return data ? <StandardPage data={data} /> : <NotFound />
+}
+
+function MapTours() {
+  useEffect(() => { document.title = 'Map Tours | Layers of Rome' }, [])
+  return <>
+    <section className="map-hero">
+      <PhotoBackdrop photos={mapTourPhotos} label="Map Tours" />
+      <div className="map-contours" aria-hidden="true"><i /><i /><i /><i /></div>
+      <div className="container map-hero-copy"><p className="eyebrow">On site and in the classroom</p><h1>Map Tours</h1><p>Layered journeys through the literature, art, architecture, and historical memory of Rome.</p></div>
+    </section>
+    <main id="main" className="container map-tours-page">
+      <Breadcrumbs title="Map Tours" eyebrow="Explore Rome" />
+      <section className="map-mission">
+        <div><p className="eyebrow">Our mission</p><h2>Meaningful stories, grounded in place.</h2></div>
+        <div><p>Expanding its collection of video, audio narratives, photo galleries, interactive timelines, and maps, Layers of Rome creates resources for educators, students, Roman enthusiasts, and tourists.</p><p>Map Tours provide in-depth, meaningful content that is approachable in both function and substance—equally accessible in the classroom, on a virtual visit, or while standing on site in Rome.</p></div>
+      </section>
+      <section className="map-tour" aria-labelledby="literary-walks-title">
+        <div className="map-tour-number">01</div>
+        <div className="map-tour-copy"><p className="eyebrow">Art · Literature · Sound</p><h2 id="literary-walks-title">Literary Walks Tour</h2><p className="map-tour-lede">Walk in the footsteps of Grand Tourists and pilgrims who found inspiration in Rome’s atmosphere and historical memory from 1700 to 1900.</p><p>The Literary Walks Map is an on-site and virtual tour in the beginning stages of charting the literature and visual culture of travelers during the Italian Grand Tour and afterward. It explores how images, art, literature, and sound enrich the experience of a place—and how experiencing that place more fully can illuminate a text, image, or work of art.</p><p>Its goal is a layered, interactive, and enjoyable encounter with art and literature in the Roman sites that inspired them, generating more meaningful conversations about the literature, art, and music of Rome.</p></div>
+        <IframeScrollGuard><div className="map-embed-shell"><div className="map-embed-label"><span>Interactive Google Map</span><strong>Literary Rome</strong></div><iframe title="Literary Walks Tour interactive Google Map" src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d23760.654188516066!2d12.461564101430547!3d41.89109842573779!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sus!4v1789761051844!5m2!1sen!2sus" allowFullScreen loading="lazy" referrerPolicy="strict-origin-when-cross-origin" /></div></IframeScrollGuard>
+      </section>
+      <section className="map-tour" aria-labelledby="forums-title">
+        <div className="map-tour-number">02</div>
+        <div className="map-tour-copy"><p className="eyebrow">Government · Commerce · Culture</p><h2 id="forums-title">The Forums of Rome Tour</h2><p className="map-tour-lede">Trace a path through the heart of Rome, where the business, government, and culture of the ancient city converged.</p><p>The Roman Forums Map offers a user-friendly route among prominent buildings and structures, explaining the origin and purpose of selected sites alongside visual representations of how these monumental places appeared in their prime.</p><p>The tour includes the Imperial Fora—the Forum of Julius Caesar, Forum of Augustus, Forum of Trajan, and Forum of Nerva—as well as Rome’s oldest forum, the Forum Boarium.</p></div>
+        <IframeScrollGuard><div className="map-embed-shell"><div className="map-embed-label"><span>Interactive Google Map</span><strong>The Roman Forums</strong></div><iframe title="Forums of Rome Tour interactive Google Map" src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d5940.051751593803!2d12.481898597423614!3d41.89230059749758!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sus!4v1789761009601!5m2!1sen!2sus" allowFullScreen loading="lazy" referrerPolicy="strict-origin-when-cross-origin" /></div></IframeScrollGuard>
+      </section>
+    </main>
+  </>
 }
 
 function NotFound() {
