@@ -1,21 +1,21 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, Route, Routes, useLocation, useParams } from 'react-router-dom'
 import { lessons, navigation, pages, type NavItem, type PageData } from './content'
-import homePantheon from './assets/photos/home-pantheon.jpg'
-import homeColosseum from './assets/photos/home-colosseum.jpg'
-import homeSkyline from './assets/photos/home-skyline.jpg'
-import homeAqueduct from './assets/photos/home-aqueduct.jpg'
-import aboutInterview from './assets/photos/about-interview.jpg'
-import aboutSeminar from './assets/photos/about-seminar.jpg'
-import aboutFieldClass from './assets/photos/about-field-class.jpg'
-import studyCohort from './assets/photos/study-cohort.jpg'
-import studyLesson from './assets/photos/study-lesson.jpg'
-import studyView from './assets/photos/study-view.jpg'
-import studyOstia from './assets/photos/study-ostia.jpg'
-import studyJewishGhetto from './assets/photos/study-jewish-ghetto.jpg'
-import mapForumSunset from './assets/photos/map-forum-sunset.jpg'
-import mapMarcellus from './assets/photos/map-marcellus.jpg'
-import mapForumPanorama from './assets/photos/map-forum-panorama.jpg'
+import homePantheon from './assets/photos/home-pantheon.webp'
+import homeColosseum from './assets/photos/home-colosseum.webp'
+import homeSkyline from './assets/photos/home-skyline.webp'
+import homeAqueduct from './assets/photos/home-aqueduct.webp'
+import aboutInterview from './assets/photos/about-interview.webp'
+import aboutSeminar from './assets/photos/about-seminar.webp'
+import aboutFieldClass from './assets/photos/about-field-class.webp'
+import studyCohort from './assets/photos/study-cohort.webp'
+import studyLesson from './assets/photos/study-lesson.webp'
+import studyView from './assets/photos/study-view.webp'
+import studyOstia from './assets/photos/study-ostia.webp'
+import studyJewishGhetto from './assets/photos/study-jewish-ghetto.webp'
+import mapForumSunset from './assets/photos/map-forum-sunset.webp'
+import mapMarcellus from './assets/photos/map-marcellus.webp'
+import mapForumPanorama from './assets/photos/map-forum-panorama.webp'
 
 const Arrow = () => <span aria-hidden="true">↗</span>
 
@@ -84,6 +84,19 @@ function Header() {
   const [open, setOpen] = useState(false)
   const location = useLocation()
   useEffect(() => setOpen(false), [location.pathname])
+  useEffect(() => {
+    if (!open) {
+      document.documentElement.classList.remove('menu-open')
+      return
+    }
+    document.documentElement.classList.add('menu-open')
+    const closeMenu = (event: KeyboardEvent) => { if (event.key === 'Escape') setOpen(false) }
+    window.addEventListener('keydown', closeMenu)
+    return () => {
+      document.documentElement.classList.remove('menu-open')
+      window.removeEventListener('keydown', closeMenu)
+    }
+  }, [open])
   return (
     <header className="site-header">
       <a className="skip-link" href="#main">Skip to content</a>
@@ -92,7 +105,7 @@ function Header() {
           <span className="brand-mark">L·R</span>
           <span><strong>Layers of Rome</strong><small>UTEP Humanities</small></span>
         </Link>
-        <button className="menu-button" onClick={() => setOpen(!open)} aria-expanded={open} aria-controls="site-nav">Menu</button>
+        <button className="menu-button" onClick={() => setOpen(!open)} aria-expanded={open} aria-controls="site-nav">{open ? 'Close' : 'Menu'}</button>
         <nav id="site-nav" className={open ? 'nav open' : 'nav'} aria-label="Main navigation">
           {navigation.map((item) => <NavGroup key={item.label} item={item} />)}
         </nav>
